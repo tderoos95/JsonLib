@@ -168,7 +168,7 @@ private static function string ExtractNextValue(string JsonString, out int Proce
 	bIsString = StartsWith(JsonString, QuotationMarkCharacter);
 	
 	if(bIsString)
-		return ExtractNextName(JsonString, ProcessedLength);
+		return QuotationMarkCharacter $ ExtractNextName(JsonString, ProcessedLength) $ QuotationMarkCharacter;
 	
 	for (i=0; i < Len(JsonString); i++)
 	{
@@ -222,9 +222,6 @@ private static function array<string> ProcessStringAsArray(string JsonString, ou
 				continue;
 			}
 			
-			if(StartsWith(ExtractedValue, QuotationMarkCharacter) && EndsWith(ExtractedValue, QuotationMarkCharacter))
-				ExtractedValue = Mid(ExtractedValue, 1, Len(ExtractedValue)-2); // remove quotation marks
-
 			StoreInArray(ExtractedValues, ExtractedValue);
 			ExtractedValue = ""; // clear for next value
 			continue;
@@ -240,10 +237,16 @@ private static function array<string> ProcessStringAsArray(string JsonString, ou
 					bEscapeNextChar = false;
 				}
 				else
+				{
+					ExtractedValue $= QuotationMarkCharacter;
 					bInString = false;
+				}
 			}
 			else
+			{
+				ExtractedValue $= QuotationMarkCharacter;
 				bInString = true;
+			}
 			
 			continue;
 		}
