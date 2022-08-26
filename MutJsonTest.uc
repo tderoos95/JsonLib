@@ -16,7 +16,7 @@ var array<string> MyArrayString;
 var array<int> MyArrayInt;
 var array<float> MyArrayFloat;
 
-var config string JsonToDeserialize;
+var config string ConfiguredJsonToDeserialize;
 
 function PreBeginPlay()
 {
@@ -26,7 +26,47 @@ function PreBeginPlay()
 	JsonBuilderPool.InitializePool(0, true);
 }
 
-function string GenerateTestJsonString()
+function JsonObject GenerateTestJsonObject()
+{
+	local JsonObject JsonObject;
+
+	Log("*** Generate Json object");
+	JsonObject = new class'JsonObject';
+	JsonObject.AddString("String", "Hello World");
+	JsonObject.AddInt("Int", 123);
+	JsonObject.AddFloat("Float", 123.456);
+	JsonObject.AddArrayString("ArrayString", MyArrayString);
+	JsonObject.AddArrayInt("ArrayInt", MyArrayInt);
+	JsonObject.AddArrayFloat("ArrayFloat", MyArrayFloat);
+
+	return JsonObject;
+}
+
+function ReadJsonValues(JsonObject JsonObject)
+{
+	local array<string> ArrayString;
+	local array<int> ArrayInt;
+	local array<float> ArrayFloat;
+
+	Log("**** Read Json object values", 'JsonLib');
+	Log("String: " $ JsonObject.GetString("String"));
+	Log("Int: " $ JsonObject.GetInt("Int"));
+	Log("Float: " $ JsonObject.GetFloat("Float"));
+
+	ArrayString = JsonObject.GetArrayString("ArrayString");
+	Log("ArrayString:", 'JsonLib');
+	PrintArrayString(ArrayString);
+
+	ArrayInt = JsonObject.GetArrayInt("ArrayInt");
+	Log("ArrayInt:", 'JsonLib');
+	PrintArrayInt(ArrayInt);
+
+	ArrayFloat = JsonObject.GetArrayFloat("ArrayFloat");
+	Log("ArrayFloat:", 'JsonLib');
+	PrintArrayFloat(ArrayFloat);
+}
+
+function string GenerateTestJsonBuilderString()
 {
 	local JsonObjectBuilder JsonBuilder;
 	
@@ -41,30 +81,59 @@ function string GenerateTestJsonString()
 	return JsonBuilder.ToString();
 }
 
-function function PrintDeserializedJsonObject()
+function JsonObject DeserializeJsonString(string JsonToDeserialize)
 {
-	local JsonObject Json;
-	local array<string> MyStringArray, MyIntArray;
-	
-	Log("Deserializing string:" @ JsonToDeserialize, 'JsonTest');
-	Json = class'JsonConvert'.static.Deserialize(JsonToDeserialize);
-	Log("Result:", 'JsonTest');
-	Log("*String:" @ Json.GetValue("String"), 'JsonTest');
-	Log("*Int:" @ Json.GetValue("Int"), 'JsonTest');
-	Log("*Float:" @ Json.GetValue("Float"), 'JsonTest');
-	Log("*String2:" @ Json.GetValue("String2"), 'JsonTest'); 
-	
-	MyStringArray = Json.GetArrayValue("StringArray");
-	MyIntArray = Json.GetArrayValue("IntArray");
-	
-	Log("*StringArray: (" $ MyStringArray.Length $ ")", 'JsonTest'); 
-	PrintArray(MyStringArray);
-	
-	Log("*IntArray: (" $ MyIntArray.Length $ ")", 'JsonTest'); 
-	PrintArray(MyIntArray);
+	Log("*** Deserializing json string:" @ JsonToDeserialize, 'JsonTest');
+	return class'JsonConvert'.static.Deserialize(JsonToDeserialize);
 }
 
-function PrintArray(array<string> MyArray)
+function PrintDeserializedJsonObject(JsonObject JsonObject)
+{
+	local array<string> MyStringArray;
+	local array<int> MyIntArray;
+	local array<float> MyFloatArray;
+
+	Log("Result:", 'JsonTest');
+	Log("*RAW*String:" @ JsonObject.GetValue("String"), 'JsonTest');
+	Log("String:" @ JsonObject.GetString("String"), 'JsonTest');
+	Log("*Int:" @ JsonObject.GetInt("Int"), 'JsonTest');
+	Log("*Float:" @ JsonObject.GetFloat("Float"), 'JsonTest');
+	
+	MyStringArray = JsonObject.GetArrayValue("ArrayString");
+	Log("*RAW*ArrayString: (" $ MyStringArray.Length $ ")", 'JsonTest'); 
+	PrintArrayString(MyStringArray);
+	
+	MyStringArray = JsonObject.GetArrayString("ArrayString");
+	MyIntArray = JsonObject.GetArrayInt("ArrayInt");
+	MyFloatArray = JsonObject.GetArrayFloat("ArrayFloat");
+	
+	Log("*ArrayString: (" $ MyStringArray.Length $ ")", 'JsonTest'); 
+	PrintArrayString(MyStringArray);
+	
+	Log("*ArrayInt: (" $ MyIntArray.Length $ ")", 'JsonTest'); 
+	PrintArrayInt(MyIntArray);
+
+	Log("*ArrayFloat: (" $ MyFloatArray.Length $ ")", 'JsonTest'); 
+	PrintArrayFloat(MyFloatArray);
+}
+
+function PrintArrayString(array<string> MyArray)
+{
+	local int i;
+	
+	for(i=0; i < MyArray.Length; i++)
+		Log("**" $ MyArray[i], 'JsonTest');
+}
+
+function PrintArrayInt(array<int> MyArray)
+{
+	local int i;
+	
+	for(i=0; i < MyArray.Length; i++)
+		Log("**" $ MyArray[i], 'JsonTest');
+}
+
+function PrintArrayFloat(array<float> MyArray)
 {
 	local int i;
 	
@@ -74,16 +143,36 @@ function PrintArray(array<string> MyArray)
 
 function PostBeginPlay()
 {
-	local string JsonString;
+	local string OriginalOutput, JsonString;
+	local JsonObject JsonObject;
 	local Controller C;
 	
 	Super.PostBeginPlay();
 	
-	JsonString = GenerateTestJsonString();
+	JsonObject = GenerateTestJsonObject();
+	JsonString = JsonObject.ToString();
+	OriginalOutput = JsonString;
+
 	Log(JsonString, 'JsonTest');
+	ReadJsonValues(JsonObject);
 	
-	PrintDeserializedJsonObject();
-	
+	Log("*** Deserialize generated json string", 'JsonTest');
+	JsonObject = DeserializeJsonString(JsonString);
+	PrintDeserializedJsonObject(JsonObject);
+
+	Log("*** Serialize deserialized json object", 'JsonTest');
+	JsonString = JsonObject.ToString();
+	Log(JsonString, 'JsonTest');
+
+	Log("**************************************", 'JsonTest');
+	Log("Serialize -> Deserialize -> Serialize", 'JsonTest');
+	Log("Test passed: " $ eval(OriginalOutput == JsonString, "Yes", "No"), 'JsonTest');
+	Log("**************************************", 'JsonTest');
+
+	Log("*** Deserialize configured json string", 'JsonTest');
+	JsonObject = DeserializeJsonString(ConfiguredJsonToDeserialize);
+	PrintDeserializedJsonObject(JsonObject);
+
 	for (C = Level.ControllerList; C != None; C = C.NextController)
 	{
 		if(PlayerController(C) != None)
