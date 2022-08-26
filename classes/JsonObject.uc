@@ -32,7 +32,7 @@ struct ArrayKeyValuePair
 var array<KeyValuePair> Values;
 var array<ArrayKeyValuePair> ArrayValues;
 
-function KeyValuePair GetKeyValuePair(string Key, optional bool bCaseSensitive)
+private function KeyValuePair GetKeyValuePair(string Key, optional bool bCaseSensitive)
 {
 	local int i;
 	local KeyValuePair Pair;
@@ -60,12 +60,12 @@ function KeyValuePair GetKeyValuePair(string Key, optional bool bCaseSensitive)
 	return Pair;
 }
 
-function string GetValue(string Key, optional bool bCaseSensitive)
+public function string GetValue(string Key, optional bool bCaseSensitive)
 {
 	return (GetKeyValuePair(Key, bCaseSensitive)).Value;
 }
 
-function string GetString(string Key, optional bool bCaseSensitive)
+public function string GetString(string Key, optional bool bCaseSensitive)
 {
 	local string ActualValue;
 	
@@ -76,17 +76,17 @@ function string GetString(string Key, optional bool bCaseSensitive)
 	return ActualValue;
 }
 
-function int GetInt(string Key, optional bool bCaseSensitive)
+public function int GetInt(string Key, optional bool bCaseSensitive)
 {
 	return int(GetValue(Key, bCaseSensitive));
 }
 
-function float GetFloat(string Key, optional bool bCaseSensitive)
+public function float GetFloat(string Key, optional bool bCaseSensitive)
 {
 	return float(GetValue(Key, bCaseSensitive));
 }
 
-function ArrayKeyValuePair GetArrayKeyValuePair(string Key, optional bool bCaseSensitive)
+private function ArrayKeyValuePair GetArrayKeyValuePair(string Key, optional bool bCaseSensitive)
 {
 	local int i;
 	local ArrayKeyValuePair Pair;
@@ -119,7 +119,7 @@ function array<string> GetArrayValue(string Key, optional bool bCaseSensitive)
 	return (GetArrayKeyValuePair(Key, bCaseSensitive)).Values;
 }
 
-function array<string> GetArrayString(string Key, optional bool bCaseSensitive)
+public function array<string> GetArrayString(string Key, optional bool bCaseSensitive)
 {
 	local array<string> ActualValues;
 	local int i;
@@ -135,7 +135,7 @@ function array<string> GetArrayString(string Key, optional bool bCaseSensitive)
 	return ActualValues;
 }
 
-function array<int> GetArrayInt(string Key, optional bool bCaseSensitive)
+public function array<int> GetArrayInt(string Key, optional bool bCaseSensitive)
 {
 	local array<string> StringValues;
 	local array<int> IntValues;
@@ -153,7 +153,7 @@ function array<int> GetArrayInt(string Key, optional bool bCaseSensitive)
 	return IntValues;
 }
 
-function array<float> GetArrayFloat(string Key, optional bool bCaseSensitive)
+public function array<float> GetArrayFloat(string Key, optional bool bCaseSensitive)
 {
 	local array<string> StringValues;
 	local array<float> FloatValues;
@@ -171,7 +171,7 @@ function array<float> GetArrayFloat(string Key, optional bool bCaseSensitive)
 	return FloatValues;
 }
 
-function AddValue(string Key, string Value)
+private function AddValue(string Key, string Value)
 {
 	local int NewIndex;
 	
@@ -181,18 +181,18 @@ function AddValue(string Key, string Value)
 	Values[NewIndex].Value = Value;
 }
 
-function AddString(string Key, string Value)
+public function AddString(string Key, string Value)
 {
 	Value = QuotationMarkCharacter $ Value $ QuotationMarkCharacter;
 	AddValue(Key, Value);
 }
 
-function AddInt(string Key, int Value)
+public function AddInt(string Key, int Value)
 {
 	AddValue(Key, string(Value));
 }
 
-function AddFloat(string Key, float Value)
+public function AddFloat(string Key, float Value)
 {
 	AddValue(Key, string(Value));
 }
@@ -296,7 +296,7 @@ public function string ToString()
 	return Result;
 }
 
-function string ArrayValueToString(array<string> ArrayToSerialize)
+private function string ArrayValueToString(array<string> ArrayToSerialize)
 {
 	local string Result;
 	local int i;
