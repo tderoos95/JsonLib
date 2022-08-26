@@ -10,21 +10,11 @@
 class MutJsonTest extends Mutator
 	config(JsonTest);
 
-var JsonObjectBuilderPool JsonBuilderPool;
-
 var array<string> MyArrayString;
 var array<int> MyArrayInt;
 var array<float> MyArrayFloat;
 
 var config string ConfiguredJsonToDeserialize;
-
-function PreBeginPlay()
-{
-	Super.PreBeginPlay();
-	
-	JsonBuilderPool = new class'JsonObjectBuilderPool';
-	JsonBuilderPool.InitializePool(0, true);
-}
 
 function JsonObject GenerateTestJsonObject()
 {
@@ -64,21 +54,6 @@ function ReadJsonValues(JsonObject JsonObject)
 	ArrayFloat = JsonObject.GetArrayFloat("ArrayFloat");
 	Log("ArrayFloat:", 'JsonLib');
 	PrintArrayFloat(ArrayFloat);
-}
-
-function string GenerateTestJsonBuilderString()
-{
-	local JsonObjectBuilder JsonBuilder;
-	
-	JsonBuilder = JsonBuilderPool.GetAvailableJsonObjectBuilder();
-	JsonBuilder.AddString("String", "MyValue");
-	JsonBuilder.AddInt("Int", 1);
-	JsonBuilder.AddFloat("Float", 1.000000);
-	JsonBuilder.AddArrayString("ArrayString", MyArrayString);
-	JsonBuilder.AddArrayInt("ArrayInt", MyArrayInt);
-	JsonBuilder.AddArrayFloat("ArrayFloat", MyArrayFloat);
-	
-	return JsonBuilder.ToString();
 }
 
 function JsonObject DeserializeJsonString(string JsonToDeserialize)
