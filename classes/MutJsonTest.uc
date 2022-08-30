@@ -16,7 +16,14 @@ var array<float> MyArrayFloat;
 
 var config string ConfiguredJsonToDeserialize;
 
-function JsonObject GenerateTestJsonObject()
+
+function PostBeginPlay()
+{
+	Super.PostBeginPlay();
+	PerformTests();
+}
+
+function JsonObject GenerateTestJsonObjectTest()
 {
 	local JsonObject JsonObject;
 
@@ -29,31 +36,10 @@ function JsonObject GenerateTestJsonObject()
 	JsonObject.AddArrayInt("ArrayInt", MyArrayInt);
 	JsonObject.AddArrayFloat("ArrayFloat", MyArrayFloat);
 
+	Log("*** Generated json object", 'JsonLib');
+	JsonObject.LogValues('JsonTest');
+
 	return JsonObject;
-}
-
-function ReadJsonValues(JsonObject JsonObject)
-{
-	local array<string> ArrayString;
-	local array<int> ArrayInt;
-	local array<float> ArrayFloat;
-
-	Log("**** Read Json object values", 'JsonLib');
-	Log("String: " $ JsonObject.GetString("String"));
-	Log("Int: " $ JsonObject.GetInt("Int"));
-	Log("Float: " $ JsonObject.GetFloat("Float"));
-
-	ArrayString = JsonObject.GetArrayString("ArrayString");
-	Log("ArrayString:", 'JsonLib');
-	PrintArrayString(ArrayString);
-
-	ArrayInt = JsonObject.GetArrayInt("ArrayInt");
-	Log("ArrayInt:", 'JsonLib');
-	PrintArrayInt(ArrayInt);
-
-	ArrayFloat = JsonObject.GetArrayFloat("ArrayFloat");
-	Log("ArrayFloat:", 'JsonLib');
-	PrintArrayFloat(ArrayFloat);
 }
 
 function JsonObject DeserializeJsonString(string JsonToDeserialize)
@@ -62,79 +48,25 @@ function JsonObject DeserializeJsonString(string JsonToDeserialize)
 	return class'JsonConvert'.static.Deserialize(JsonToDeserialize);
 }
 
-function PrintDeserializedJsonObject(JsonObject JsonObject)
-{
-	local array<string> MyStringArray;
-	local array<int> MyIntArray;
-	local array<float> MyFloatArray;
-
-	Log("Result:", 'JsonTest');
-	Log("*RAW*String:" @ JsonObject.GetValue("String"), 'JsonTest');
-	Log("String:" @ JsonObject.GetString("String"), 'JsonTest');
-	Log("*Int:" @ JsonObject.GetInt("Int"), 'JsonTest');
-	Log("*Float:" @ JsonObject.GetFloat("Float"), 'JsonTest');
-	
-	MyStringArray = JsonObject.GetArrayValue("ArrayString");
-	Log("*RAW*ArrayString: (" $ MyStringArray.Length $ ")", 'JsonTest'); 
-	PrintArrayString(MyStringArray);
-	
-	MyStringArray = JsonObject.GetArrayString("ArrayString");
-	MyIntArray = JsonObject.GetArrayInt("ArrayInt");
-	MyFloatArray = JsonObject.GetArrayFloat("ArrayFloat");
-	
-	Log("*ArrayString: (" $ MyStringArray.Length $ ")", 'JsonTest'); 
-	PrintArrayString(MyStringArray);
-	
-	Log("*ArrayInt: (" $ MyIntArray.Length $ ")", 'JsonTest'); 
-	PrintArrayInt(MyIntArray);
-
-	Log("*ArrayFloat: (" $ MyFloatArray.Length $ ")", 'JsonTest'); 
-	PrintArrayFloat(MyFloatArray);
-}
-
-function PrintArrayString(array<string> MyArray)
-{
-	local int i;
-	
-	for(i=0; i < MyArray.Length; i++)
-		Log("**" $ MyArray[i], 'JsonTest');
-}
-
-function PrintArrayInt(array<int> MyArray)
-{
-	local int i;
-	
-	for(i=0; i < MyArray.Length; i++)
-		Log("**" $ MyArray[i], 'JsonTest');
-}
-
-function PrintArrayFloat(array<float> MyArray)
-{
-	local int i;
-	
-	for(i=0; i < MyArray.Length; i++)
-		Log("**" $ MyArray[i], 'JsonTest');
-}
-
-function PostBeginPlay()
+function PerformTests()
 {
 	local string OriginalOutput, JsonString;
 	local JsonObject JsonObject;
-	local Controller C;
 	
-	Super.PostBeginPlay();
+	// Test 1: Generate Json object and log values to make sure they're present
+	JsonObject = GenerateTestJsonObjectTest();
 	
-	JsonObject = GenerateTestJsonObject();
+	// Test 2: Serialize Json object to string and log it
 	JsonString = JsonObject.ToString();
 	OriginalOutput = JsonString;
-
 	Log(JsonString, 'JsonTest');
-	ReadJsonValues(JsonObject);
-	
+
+	// Test 3: Deserialize string and log values inside deserialized object 
 	Log("*** Deserialize generated json string", 'JsonTest');
 	JsonObject = DeserializeJsonString(JsonString);
-	PrintDeserializedJsonObject(JsonObject);
+	Jsonobject.LogValues('JsonTest');
 
+	// Test 4: Serialize back to string, and compare to original serialized json
 	Log("*** Serialize deserialized json object", 'JsonTest');
 	JsonString = JsonObject.ToString();
 	Log(JsonString, 'JsonTest');
@@ -144,24 +76,19 @@ function PostBeginPlay()
 	Log("Test passed: " $ eval(OriginalOutput == JsonString, "Yes", "No"), 'JsonTest');
 	Log("**************************************", 'JsonTest');
 
+	// Test 5: Deserialize json string inside config file and log values
 	Log("*** Deserialize configured json string", 'JsonTest');
 	JsonObject = DeserializeJsonString(ConfiguredJsonToDeserialize);
-	PrintDeserializedJsonObject(JsonObject);
-
-	for (C = Level.ControllerList; C != None; C = C.NextController)
-	{
-		if(PlayerController(C) != None)
-			PlayerController(C).ClientMessage(JsonString);
-	}
+	Jsonobject.LogValues('JsonTest');
 }
 
 defaultproperties
 {
 	FriendlyName="** JsonTest"
-	MyArrayString(0)="MyValue0"
-	MyArrayString(1)="MyValue1"
-	MyArrayInt(0)=0
-	MyArrayInt(1)=1
-	MyArrayFloat(0)=0.000000
+	MyArrayString(0)="Hello"
+	MyArrayString(1)="World"
+	MyArrayInt(0)=42
+	MyArrayInt(1)=84
+	MyArrayFloat(0)=0.500000
 	MyArrayFloat(1)=1.000000
 }
