@@ -27,7 +27,7 @@ function JsonObject GenerateTestJsonObjectTest()
 {
 	local JsonObject JsonObject;
 
-	Log("*** Generate Json object");
+	Log("*** Generate Json object", 'JsonTest');
 	JsonObject = new class'JsonObject';
 	JsonObject.AddString("String", "Hello World");
 	JsonObject.AddInt("Int", 123);
@@ -36,7 +36,7 @@ function JsonObject GenerateTestJsonObjectTest()
 	JsonObject.AddArrayInt("ArrayInt", MyArrayInt);
 	JsonObject.AddArrayFloat("ArrayFloat", MyArrayFloat);
 
-	Log("*** Generated json object", 'JsonLib');
+	Log("*** Generated Json object", 'JsonTest');
 	JsonObject.LogValues('JsonTest');
 
 	return JsonObject;
