@@ -197,6 +197,13 @@ public function AddFloat(string Key, float Value)
 	AddValue(Key, string(Value));
 }
 
+public function AddJson(string Key, JsonObject Value)
+{
+	if(Value != None)
+		AddValue(Key, Value.ToString());
+	else AddValue(Key, "");
+}
+
 public function AddArrayValue(string Key, array<string> ArrayToAdd)
 {
 	local int NewIndex;
@@ -316,4 +323,26 @@ private function string ArrayValueToString(array<string> ArrayToSerialize)
 	Result $= ArrayCloseCharacter;
 	
 	return Result;
+}
+
+public function LogValues(optional Name Tag)
+{
+	local int i, x;
+	
+	log("** Json Values:", Tag);
+
+	for(i = 0; i < Values.Length; i++)
+	{
+		log("* " $ Values[i].Key $ ": " $ Values[i].Value, Tag);
+	}
+
+	for(i = 0; i < ArrayValues.Length; i++)
+	{
+		log(ArrayValues[i].Key $ ":", Tag);
+
+		for(x = 0; x < ArrayValues[i].Values.Length; x++)
+			log("* " $ ArrayValues[i].Values[x], Tag);
+	}
+
+	log("** End Json Values", Tag);
 }
