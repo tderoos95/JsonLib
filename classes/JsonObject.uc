@@ -31,6 +31,7 @@ struct ArrayKeyValuePair
 
 var array<KeyValuePair> Values;
 var array<ArrayKeyValuePair> ArrayValues;
+var array<JsonObject> JsonObjects;
 
 private function KeyValuePair GetKeyValuePair(string Key, optional bool bCaseSensitive)
 {
@@ -259,6 +260,20 @@ public function AddArrayFloat(string Key, array<float> ArrayToAdd)
 	AddArrayValue(Key, TransformedArray);
 }
 
+public function AddArrayJson(string Key, array<JsonObject> ArrayToAdd)
+{
+	local array<string> TransformedArray;
+	local int i, NewIndex;
+
+	for(i = 0; i < ArrayToAdd.Length; i++)
+	{
+		NewIndex = TransformedArray.length;
+		TransformedArray.Length = NewIndex + 1;
+		TransformedArray[NewIndex] = ArrayToAdd[i].ToString();
+	}
+	
+	AddArrayValue(Key, TransformedArray);
+}
 
 public function string ToString()
 {
@@ -286,7 +301,8 @@ public function string ToString()
 
 	for(i = 0; i < ArrayValues.Length; i++)
 	{
-		Result $= ValueSeparatorCharacter;
+		if(Len(Result) > 0)
+			Result $= ValueSeparatorCharacter;
 		
 		// Add variable name
 		Result $= QuotationMarkCharacter;
@@ -296,6 +312,16 @@ public function string ToString()
 		// Add variable value
 		Result $= ValueAssignCharacter;
 		Result $= ArrayValueToString(ArrayValues[i].Values);
+	}
+
+	for(i = 0; i < JsonObjects.Length; i++)
+	{
+		if(Len(Result) > 0)
+			Result $= ValueSeparatorCharacter;
+		
+		// Add variable value
+		Result $= ValueAssignCharacter;
+		Result $= JsonObjects[i].ToString();
 	}
 	
 	Result $= ObjectEndCharacter;
