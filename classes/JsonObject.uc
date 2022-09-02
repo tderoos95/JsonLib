@@ -77,6 +77,11 @@ public function string GetString(string Key, optional bool bCaseSensitive)
 	return ActualValue;
 }
 
+public function bool GetBool(string Key, optional bool bCaseSensitive)
+{
+	return bool(GetValue(Key, bCaseSensitive));
+}
+
 public function int GetInt(string Key, optional bool bCaseSensitive)
 {
 	return int(GetValue(Key, bCaseSensitive));
