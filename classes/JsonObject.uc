@@ -193,6 +193,11 @@ public function AddString(string Key, string Value)
 	AddValue(Key, Value);
 }
 
+public function AddBool(string Key, bool Value)
+{
+	AddValue(Key, string(Value));
+}
+
 public function AddInt(string Key, int Value)
 {
 	AddValue(Key, string(Value));
