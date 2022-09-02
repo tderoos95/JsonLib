@@ -34,13 +34,15 @@ static function bool EndsWith(string Text, string Find, optional bool bCaseSensi
 
 public static function JsonObject Deserialize(string JsonString)
 {
-	local JsonObject Json;
+	return static.DeserializeIntoExistingObject(new class'JsonObject', JsonString);
+}
+
+public static function JsonObject DeserializeIntoExistingObject(Jsonobject Json, string JsonString)
+{
 	local string CurrentKey, CurrentValue;
 	local array<string> CurrentValues;
 	local int ProcessedLength, NewEntryIndex;
 	local bool bIsArray;
-	
-	Json = new class'JsonObject';
 	
 	if(!StartsWith(JsonString, ObjectStartCharacter) || !EndsWith(JsonString, ObjectEndCharacter))
 	{
