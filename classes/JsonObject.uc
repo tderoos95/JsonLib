@@ -351,6 +351,56 @@ private function string ArrayValueToString(array<string> ArrayToSerialize)
 	return Result;
 }
 
+public function RemoveValue(string Key, optional bool bCaseSensitive)
+{
+	local int i;
+	
+	for(i = 0; i < Values.Length; i++)
+	{
+		if(bCaseSensitive)
+		{
+			if(Values[i].Key == Key)
+			{
+				Values.Remove(i, 1);
+				return;
+			}
+		}
+		else
+		{
+			if(Values[i].Key ~= Key)
+			{
+				Values.Remove(i, 1);
+				return;
+			}
+		}
+	}
+}
+
+public function RemoveArrayValue(string Key, optional bool bCaseSensitive)
+{
+	local int i;
+	
+	for(i = 0; i < ArrayValues.Length; i++)
+	{
+		if(bCaseSensitive)
+		{
+			if(ArrayValues[i].Key == Key)
+			{
+				ArrayValues.Remove(i, 1);
+				return;
+			}
+		}
+		else
+		{
+			if(ArrayValues[i].Key ~= Key)
+			{
+				ArrayValues.Remove(i, 1);
+				return;
+			}
+		}
+	}
+}
+
 public function LogValues(optional Name Tag)
 {
 	local int i, x;
