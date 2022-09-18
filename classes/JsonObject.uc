@@ -212,7 +212,7 @@ public function AddJson(string Key, JsonObject Value)
 {
 	if(Value != None)
 		AddValue(Key, Value.ToString());
-	else AddValue(Key, "");
+	else AddValue(Key, "{}");
 }
 
 public function AddArrayValue(string Key, array<string> ArrayToAdd)
