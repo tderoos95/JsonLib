@@ -306,7 +306,16 @@ public function string ToString()
 		
 		// Add variable value
 		Result $= ValueAssignCharacter;
-		Result $= Values[i].Value;
+		
+		if(Values[i].Value ~= "True" || Values[i].Value ~= "False")
+		{
+			// Json is strictly case sensitive
+			Result $= Eval(Values[i].Value ~= "True", "true", "false");
+		}
+		else
+		{
+			Result $= Values[i].Value;
+		}
 	}
 
 	for(i = 0; i < ArrayValues.Length; i++)
