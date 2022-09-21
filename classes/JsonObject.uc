@@ -195,7 +195,8 @@ public function AddString(string Key, string Value)
 
 public function AddBool(string Key, bool Value)
 {
-	AddValue(Key, string(Value));
+	// Use lowercase because Json is case sensitive
+	AddValue(Key, Locs(string(Value)));
 }
 
 public function AddInt(string Key, int Value)
@@ -306,16 +307,7 @@ public function string ToString()
 		
 		// Add variable value
 		Result $= ValueAssignCharacter;
-		
-		if(Values[i].Value ~= "True" || Values[i].Value ~= "False")
-		{
-			// Json is strictly case sensitive
-			Result $= Eval(Values[i].Value ~= "True", "true", "false");
-		}
-		else
-		{
-			Result $= Values[i].Value;
-		}
+		Result $= Values[i].Value;
 	}
 
 	for(i = 0; i < ArrayValues.Length; i++)
