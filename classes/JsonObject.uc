@@ -433,3 +433,10 @@ public function LogValues(optional Name Tag)
 
 	log("** End Json Values", Tag);
 }
+
+function Clear()
+{
+	Values.Length = 0;
+	ArrayValues.Length = 0;
+	JsonObjects.Length = 0;
+}
