@@ -43,16 +43,12 @@ public static function JsonObject DeserializeIntoExistingObject(Jsonobject Json,
 	local array<string> CurrentValues;
 	local int ProcessedLength, NewEntryIndex;
 	local bool bIsArray;
-	
-	if(!StartsWith(JsonString, ObjectStartCharacter) || !EndsWith(JsonString, ObjectEndCharacter))
-	{
-		Warn("Invalid Json structure:" @ JsonString);
-		return Json;
-	}
-	
+
 	// remove object start/end characters
-	JsonString = Mid(JsonString, 1);
-	JsonString = Left(JsonString, Len(JsonString) - 1);
+	if(StartsWith(JsonString, ObjectStartCharacter))
+		JsonString = Mid(JsonString, 1);
+	if(EndsWith(JsonString, ObjectEndCharacter))
+		JsonString = Left(JsonString, Len(JsonString) - 1);
 	
 	while(Len(JsonString) > 0)
 	{
