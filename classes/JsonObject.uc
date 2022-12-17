@@ -12,6 +12,7 @@ class JsonObject extends Object;
 const ObjectStartCharacter = "{";
 const ObjectEndCharacter = "}";
 const QuotationMarkCharacter = "\"";
+const EscapeCharacter = "\\";
 const ValueAssignCharacter = ":";
 const ValueSeparatorCharacter = ",";
 const ArrayOpenCharacter = "[";
@@ -189,8 +190,16 @@ private function AddValue(string Key, string Value)
 
 public function AddString(string Key, string Value)
 {
+	Value = EscapeStringTerminationCharacter(Value);
 	Value = QuotationMarkCharacter $ Value $ QuotationMarkCharacter;
 	AddValue(Key, Value);
+}
+
+
+private function string EscapeStringTerminationCharacter(string Value)
+{
+	ReplaceText(Value, QuotationMarkCharacter, EscapeCharacter $ QuotationMarkCharacter);
+	return Value;
 }
 
 public function AddBool(string Key, bool Value)
