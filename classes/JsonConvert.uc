@@ -182,6 +182,8 @@ private static function string ExtractNextValue(string JsonString, out int Proce
 	return ExtractedValue;
 }
 
+// Processes string as array, does not escape characters. If you need to escape 
+// characters, use ExtractNextName in conjunction with ProcessStringAsArray.
 private static function array<string> ProcessStringAsArray(string JsonString, out int ProcessedLength)
 {
 	local bool bInArray, bInString, bEscapeNextChar;
@@ -251,13 +253,11 @@ private static function array<string> ProcessStringAsArray(string JsonString, ou
 		
 		if(CurrentChar == EscapeCharacter)
 		{
+			ExtractedValue $= CurrentChar;
+
 			if(bEscapeNextChar)
-			{
-				ExtractedValue $= CurrentChar;
 				bEscapeNextChar = false;
-			}
-			else
-				bEscapeNextChar = true;
+			else bEscapeNextChar = true;
 			
 			continue;
 		}

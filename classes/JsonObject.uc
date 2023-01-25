@@ -195,7 +195,6 @@ public function AddString(string Key, string Value)
 	AddValue(Key, Value);
 }
 
-
 private function string EscapeStringTerminationCharacter(string Value)
 {
 	ReplaceText(Value, QuotationMarkCharacter, EscapeCharacter $ QuotationMarkCharacter);
