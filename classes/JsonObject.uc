@@ -190,14 +190,15 @@ private function AddValue(string Key, string Value)
 
 public function AddString(string Key, string Value)
 {
-	Value = EscapeStringTerminationCharacter(Value);
+	Value = EscapeCharacters(Value);
 	Value = QuotationMarkCharacter $ Value $ QuotationMarkCharacter;
 	AddValue(Key, Value);
 }
 
-private function string EscapeStringTerminationCharacter(string Value)
+private function string EscapeCharacters(string Value)
 {
-	ReplaceText(Value, QuotationMarkCharacter, EscapeCharacter $ QuotationMarkCharacter);
+	ReplaceText(Value, EscapeCharacter, EscapeCharacter $ EscapeCharacter); // escape backslashes always first, because it's used to escape other characters
+	ReplaceText(Value, QuotationMarkCharacter, EscapeCharacter $ QuotationMarkCharacter); // escape quatation marks
 	return Value;
 }
 
