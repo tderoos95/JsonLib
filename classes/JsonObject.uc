@@ -17,6 +17,7 @@ const ValueAssignCharacter = ":";
 const ValueSeparatorCharacter = ",";
 const ArrayOpenCharacter = "[";
 const ArrayCloseCharacter = "]";
+const UknownIllegalCharacter = "";
 
 struct KeyValuePair
 {
@@ -199,6 +200,7 @@ private function string EscapeCharacters(string Value)
 {
 	ReplaceText(Value, EscapeCharacter, EscapeCharacter $ EscapeCharacter); // escape backslashes always first, because it's used to escape other characters
 	ReplaceText(Value, QuotationMarkCharacter, EscapeCharacter $ QuotationMarkCharacter); // escape quatation marks
+	ReplaceText(Value, UknownIllegalCharacter, ""); // this character immediately makes the json invalid, if not removed
 	return Value;
 }
 
