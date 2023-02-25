@@ -183,24 +183,33 @@ private function AddValue(string Key, string Value)
 {
 	local int NewIndex;
 	
+	RemoveIllegalCharactersGlobal(Key);
+	RemoveIllegalCharactersGlobal(Value);
+
 	NewIndex = Values.length;
 	Values.Length = NewIndex + 1;
 	Values[NewIndex].Key = Key;
 	Values[NewIndex].Value = Value;
 }
 
+private function RemoveIllegalCharactersGlobal(string Value)
+{
+	ReplaceText(Value, UknownIllegalCharacter, ""); // this character immediately makes the json invalid, if not removed
+	ReplaceText(Value, Chr(10), ""); // remove newlines
+	ReplaceText(Value, Chr(13), ""); // remove carriage returns
+}
+
 public function AddString(string Key, string Value)
 {
-	Value = EscapeCharacters(Value);
+	Value = EscapeStringCharacters(Value);
 	Value = QuotationMarkCharacter $ Value $ QuotationMarkCharacter;
 	AddValue(Key, Value);
 }
 
-private function string EscapeCharacters(string Value)
+private function string EscapeStringCharacters(string Value)
 {
 	ReplaceText(Value, EscapeCharacter, EscapeCharacter $ EscapeCharacter); // escape backslashes always first, because it's used to escape other characters
 	ReplaceText(Value, QuotationMarkCharacter, EscapeCharacter $ QuotationMarkCharacter); // escape quatation marks
-	ReplaceText(Value, UknownIllegalCharacter, ""); // this character immediately makes the json invalid, if not removed
 	return Value;
 }
 
