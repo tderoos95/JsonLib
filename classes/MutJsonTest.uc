@@ -4,7 +4,7 @@
 // well as making your code more resilient to version changes.
 //
 // Made in 2022, for Unreal Universe
-// Coded by Infy#1771
+// Coded by Infy95
 // http://discord.unrealuniverse.net
 //==================================================================
 class MutJsonTest extends Mutator
