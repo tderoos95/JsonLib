@@ -4,7 +4,7 @@
 // well as making your code more resilient to version changes.
 //
 // Made in 2022, for Unreal Universe
-// Coded by Infy#1771
+// Coded by Infy95
 // http://discord.unrealuniverse.net
 //==================================================================
 class JsonObject extends Object;
@@ -63,6 +63,11 @@ private function KeyValuePair GetKeyValuePair(string Key, optional bool bCaseSen
 	return Pair;
 }
 
+public function bool HasValue(string Key, optional bool bCaseSensitive)
+{
+	return (GetKeyValuePair(Key, bCaseSensitive).Key ~= "");
+}
+
 public function string GetValue(string Key, optional bool bCaseSensitive)
 {
 	return (GetKeyValuePair(Key, bCaseSensitive)).Value;
@@ -73,6 +78,9 @@ public function string GetString(string Key, optional bool bCaseSensitive)
 	local string ActualValue;
 	
 	ActualValue = GetValue(Key, bCaseSensitive);
+	if(ActualValue ~= "null")
+		return ActualValue;
+
 	// Remove quotation marks
 	ActualValue = Mid(ActualValue, 1, Len(ActualValue) - 2);
 
@@ -92,6 +100,23 @@ public function int GetInt(string Key, optional bool bCaseSensitive)
 public function float GetFloat(string Key, optional bool bCaseSensitive)
 {
 	return float(GetValue(Key, bCaseSensitive));
+}
+
+public function JsonObject GetJson(string Key, optional bool bCaseSensitive)
+{
+	local JsonObject NewObject;
+	local string Value;
+	
+	Value = GetValue(Key, bCaseSensitive);
+	
+	if(Len(Value) > 0)
+	{
+		NewObject = new class'JsonObject';
+		class'JsonConvert'.static.DeserializeIntoExistingObject(NewObject, Value);
+		return NewObject;
+	}
+	
+	return NewObject;
 }
 
 private function ArrayKeyValuePair GetArrayKeyValuePair(string Key, optional bool bCaseSensitive)
