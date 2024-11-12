@@ -1,3 +1,8 @@
+//==================================================================
+// Json in UT2004? Why not?!
+// Made by Infy - 2022 - 2025
+// http://discord.unrealuniverse.net
+//==================================================================
 class JsonUtils extends Object;
 
 // Strip illegal characters that break JSON parsing

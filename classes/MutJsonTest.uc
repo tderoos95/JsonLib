@@ -1,10 +1,6 @@
 //==================================================================
 // Json in UT2004? Why not?!
-// Can be utilized to tidy up communication protocols, as
-// well as making your code more resilient to version changes.
-//
-// Made in 2022, for Unreal Universe
-// Coded by Infy#1771
+// Made by Infy - 2022 - 2025
 // http://discord.unrealuniverse.net
 //==================================================================
 class MutJsonTest extends Mutator
