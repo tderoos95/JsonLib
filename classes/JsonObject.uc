@@ -197,6 +197,7 @@ private function string EscapeCharacters(string Value)
 	ReplaceText(Value, EscapeCharacter, EscapeCharacter $ EscapeCharacter); // escape backslashes always first, because it's used to escape other characters
 	ReplaceText(Value, QuotationMarkCharacter, EscapeCharacter $ QuotationMarkCharacter); // escape quatation marks
 	ReplaceText(Value, UknownIllegalCharacter, ""); // this character immediately makes the json invalid, if not removed
+
 	return Value;
 }
 
@@ -297,21 +298,21 @@ public function string ToString()
 {
 	local string Result;
 	local int i;
-	
+	local bool bHasMembers;
+
 	Result = ObjectStartCharacter;
-	
+
 	for(i = 0; i < Values.Length; i++)
 	{
-		if(i > 0)
-		{
+		if(bHasMembers)
 			Result $= ValueSeparatorCharacter;
-		}
-		
+		bHasMembers = true;
+
 		// Add variable name
 		Result $= QuotationMarkCharacter;
 		Result $= Values[i].Key;
 		Result $= QuotationMarkCharacter;
-		
+
 		// Add variable value
 		Result $= ValueAssignCharacter;
 		Result $= Values[i].Value;
@@ -319,14 +320,15 @@ public function string ToString()
 
 	for(i = 0; i < ArrayValues.Length; i++)
 	{
-		if(Len(Result) > 0)
+		if(bHasMembers)
 			Result $= ValueSeparatorCharacter;
-		
+		bHasMembers = true;
+
 		// Add variable name
 		Result $= QuotationMarkCharacter;
 		Result $= ArrayValues[i].Key;
 		Result $= QuotationMarkCharacter;
-		
+
 		// Add variable value
 		Result $= ValueAssignCharacter;
 		Result $= ArrayValueToString(ArrayValues[i].Values);
@@ -334,16 +336,17 @@ public function string ToString()
 
 	for(i = 0; i < JsonObjects.Length; i++)
 	{
-		if(Len(Result) > 0)
+		if(bHasMembers)
 			Result $= ValueSeparatorCharacter;
-		
+		bHasMembers = true;
+
 		// Add variable value
 		Result $= ValueAssignCharacter;
 		Result $= JsonObjects[i].ToString();
 	}
-	
+
 	Result $= ObjectEndCharacter;
-	
+
 	return Result;
 }
 
