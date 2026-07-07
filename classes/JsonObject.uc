@@ -194,9 +194,15 @@ public function AddString(string Key, string Value)
 
 private function string EscapeCharacters(string Value)
 {
+	local int ProfileLen;
+
+	if(class'JsonProfiler'.static.Active()) ProfileLen = Len(Value);
+
 	ReplaceText(Value, EscapeCharacter, EscapeCharacter $ EscapeCharacter); // escape backslashes always first, because it's used to escape other characters
 	ReplaceText(Value, QuotationMarkCharacter, EscapeCharacter $ QuotationMarkCharacter); // escape quatation marks
 	ReplaceText(Value, UknownIllegalCharacter, ""); // this character immediately makes the json invalid, if not removed
+
+	if(class'JsonProfiler'.static.Active()) class'JsonProfiler'.static.RecordEscape(ProfileLen);
 
 	return Value;
 }
@@ -298,7 +304,15 @@ public function string ToString()
 {
 	local string Result;
 	local int i;
-	local bool bHasMembers;
+	local bool bProfile, bOuter, bHasMembers;
+
+	// Count only the outermost call (bOuter) so recursion isn't double-counted.
+	bProfile = class'JsonProfiler'.static.Active();
+	if(bProfile)
+	{
+		bOuter = class'JsonProfiler'.default.ToStringDepth == 0;
+		class'JsonProfiler'.default.ToStringDepth++;
+	}
 
 	Result = ObjectStartCharacter;
 
@@ -346,6 +360,12 @@ public function string ToString()
 	}
 
 	Result $= ObjectEndCharacter;
+
+	if(bProfile)
+	{
+		class'JsonProfiler'.default.ToStringDepth--;
+		if(bOuter) class'JsonProfiler'.static.RecordToString(Len(Result));
+	}
 
 	return Result;
 }

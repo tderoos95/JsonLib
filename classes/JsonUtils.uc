@@ -23,6 +23,9 @@ static final function string StripIllegalCharacters(string Input)
             SanitizedInput $= CurrentChar;
     }
 
+    if(class'JsonProfiler'.static.Active())
+        class'JsonProfiler'.static.RecordStrip(Length, Length);  // 1 op/char now (no 256-loop)
+
     return SanitizedInput;
 }
 
