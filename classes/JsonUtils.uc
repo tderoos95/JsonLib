@@ -5,26 +5,24 @@
 //==================================================================
 class JsonUtils extends Object;
 
-// Strip illegal characters that break JSON parsing
+// Strip control chars; keep printable 32..255. Asc() is O(1) vs GetChrCode's 256-loop.
 static final function string StripIllegalCharacters(string Input)
 {
     local string CurrentChar, SanitizedInput;
     local int CurrentCharCode;
-    local bool bIllegalCharacter;
-    local int i;
+    local int i, Length;
 
-    for(i = 0; i < Len(Input); i++)
+    Length = Len(Input);
+
+    for(i = 0; i < Length; i++)
     {
         CurrentChar = Mid(Input, i, 1);
-        CurrentCharCode = GetChrCode(CurrentChar);
-        bIllegalCharacter = CurrentCharCode < 32;
+        CurrentCharCode = Asc(CurrentChar);
 
-        if(!bIllegalCharacter)
-        {
+        if(CurrentCharCode >= 32 && CurrentCharCode <= 255)
             SanitizedInput $= CurrentChar;
-        }
     }
-    
+
     return SanitizedInput;
 }
 
