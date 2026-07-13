@@ -99,7 +99,7 @@ static function int CreateNewValueEntry(JsonObject Json)
 
 // names are always inbetween quotation marks, i.e.: "MyName":
 // can also be used for extracting string values, i.e.: "MyValue"
-// supports escape characters
+// the returned text is unescaped
 private static function string ExtractNextName(string JsonString, out int ProcessedLength)
 {
 	local string ExtractedName;
@@ -121,35 +121,68 @@ private static function string ExtractNextName(string JsonString, out int Proces
 			
 			continue;
 		}
-		
-		if(CurrentChar == EscapeCharacter)
+
+		if(bEscapeNextChar)
 		{
-			if(bEscapeNextChar)
+			bEscapeNextChar = false;
+
+			if(CurrentChar == "u")
 			{
-				ExtractedName $= CurrentChar;
-				bEscapeNextChar = false;
+				ExtractedName $= UnescapeUnicode(Mid(JsonString, i+1, 4));
+				i += 4;
+				ProcessedLength += 4;
 			}
 			else
-				bEscapeNextChar = true;
-			
+				ExtractedName $= UnescapeChar(CurrentChar);
+
 			continue;
 		}
-		
+
+		if(CurrentChar == EscapeCharacter)
+		{
+			bEscapeNextChar = true;
+			continue;
+		}
+
 		if(CurrentChar == QuotationMarkCharacter)
 		{
-			if(!bEscapeNextChar)
-			{
-				bInName = false;
-				break;
-			}
-			else
-				bEscapeNextChar = false;
+			bInName = false;
+			break;
 		}
-		
+
 		ExtractedName $= CurrentChar;
 	}
 	
 	return ExtractedName;
+}
+
+private static function string UnescapeChar(string EscapedChar)
+{
+	if(EscapedChar == "n")
+		return Chr(10);
+	if(EscapedChar == "r")
+		return Chr(13);
+	if(EscapedChar == "t")
+		return Chr(9);
+	if(EscapedChar == "b")
+		return Chr(8);
+	if(EscapedChar == "f")
+		return Chr(12);
+
+	return EscapedChar;
+}
+
+// control codes are dropped: they cannot survive a round trip through a game string
+private static function string UnescapeUnicode(string HexDigits)
+{
+	local int CharCode;
+
+	CharCode = class'JsonUtils'.static.HexToInt(HexDigits);
+
+	if(CharCode < 32)
+		return "";
+
+	return Chr(CharCode);
 }
 
 private static function string ExtractNextValue(string JsonString, out int ProcessedLength)
@@ -203,7 +236,7 @@ private static function array<string> ProcessStringAsArray(string JsonString, ou
 			continue;
 		}
 		
-		if(CurrentChar == ArrayCloseCharacter)
+		if(CurrentChar == ArrayCloseCharacter && !bInString)
 		{
 			bInArray = false;
 			StoreInArray(ExtractedValues, ExtractedValue);
@@ -259,6 +292,7 @@ private static function array<string> ProcessStringAsArray(string JsonString, ou
 		}
 		
 		ExtractedValue $= CurrentChar;
+		bEscapeNextChar = false;
 	}
 	
 	return ExtractedValues;
