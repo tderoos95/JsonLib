@@ -192,12 +192,7 @@ public function AddString(string Key, string Value)
 	AddValue(Key, Value);
 }
 
-// A json string leaves here as pure ascii. Strings are UTF-16 in memory but only one byte per character
-// survives being written out, so a character above 0x7E would leave as a lone high byte - no longer valid
-// UTF-8, and a strict reader rejects the whole document rather than that one character.
-//
-// One pass, and runs of ordinary characters are copied whole: a value needing no escaping at all is
-// returned as it came in, rather than rebuilt one character at a time.
+// Only one byte per character survives the write, so anything above 0x7E must be escaped or the document is invalid.
 public function string EscapeCharacters(string Value)
 {
 	local string Result;
