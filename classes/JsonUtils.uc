@@ -5,6 +5,23 @@
 //==================================================================
 class JsonUtils extends Object;
 
+// A UT2004 colour code is the escape byte plus three raw channel bytes, and a channel can hold any value -
+// so a code only ever comes off as a whole unit, before anything judges those bytes one at a time.
+// Nothing is stripped on your behalf when a value is serialized; call this when you want the markup gone.
+static final function string StripColorCodes(string Text)
+{
+    local int p;
+
+    p = InStr(Text, Chr(27));
+    while(p != -1)
+    {
+        Text = Left(Text, p) $ Mid(Text, p + 4);
+        p = InStr(Text, Chr(27));
+    }
+
+    return Text;
+}
+
 static final function int GetChrCode(string Char)
 {
     local int i;
