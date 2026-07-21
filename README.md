@@ -30,7 +30,11 @@ log("" $ Json.GetInt("Score"));   // 12
 `GetString` / `GetInt` / `GetFloat` / `GetBool` / `GetArray*` (key lookup is case-insensitive by
 default), `RemoveValue`, `Clear`, `ToString`.
 `JsonConvert` — `Deserialize`, `DeserializeIntoExistingObject`, `StartsWith`, `EndsWith`.
-`JsonUtils` — `StripIllegalCharacters`.
+`JsonUtils` — `HexToInt`, `GetChrCode`.
+
+`AddString` escapes for you: the value is emitted as a JSON string with `\uXXXX` for
+anything outside printable ASCII, so the serialized document is always pure ASCII and therefore
+always valid UTF-8. Do not pre-filter your text.
 
 ## Install
 

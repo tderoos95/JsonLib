@@ -198,7 +198,7 @@ public function AddString(string Key, string Value)
 //
 // One pass, and runs of ordinary characters are copied whole: a value needing no escaping at all is
 // returned as it came in, rather than rebuilt one character at a time.
-private function string EscapeCharacters(string Value)
+public function string EscapeCharacters(string Value)
 {
 	local string Result;
 	local int i, TextLength, Code, RunStart;
