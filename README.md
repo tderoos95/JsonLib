@@ -30,7 +30,7 @@ log("" $ Json.GetInt("Score"));   // 12
 `GetString` / `GetInt` / `GetFloat` / `GetBool` / `GetArray*` (key lookup is case-insensitive by
 default), `RemoveValue`, `Clear`, `ToString`.
 `JsonConvert` — `Deserialize`, `DeserializeIntoExistingObject`, `StartsWith`, `EndsWith`.
-`JsonUtils` — `StripColorCodes`, `HexToInt`, `GetChrCode`.
+`JsonUtils` — `StripColorCodes`, `HexToInt`.
 
 ### What `AddString` does, and what it does not
 

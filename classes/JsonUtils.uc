@@ -22,21 +22,6 @@ static final function string StripColorCodes(string Text)
     return Text;
 }
 
-static final function int GetChrCode(string Char)
-{
-    local int i;
-
-    for(i = 0; i < 256; i++)
-    {
-        if(Char == Chr(i))
-        {
-            return i;
-        }
-    }
-
-    return -1;
-}
-
 static final function int HexToInt(string HexDigits)
 {
     local int i, Length, Result, Digit;
